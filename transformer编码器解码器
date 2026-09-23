@@ -1,0 +1,23 @@
+Transformer：Attention is all you need
+
+编码器 encoder
+
+encode-block结构：两层 Multi-Head Attention+FFN
+
+Multi-Head Attention：多头注意力、输出映射、dropout、残差连接、层归一化
+
+前向传播网络FFN：线性层、relu激活、线性层、dropout、残差连接、层归一化
+
+先给输入加入位置编码，然后依次通过 6 个参数独立的 Encoder Block；每个 Block 都执行一次「多头自注意力 + Add & Norm」和一次「FFN + Add & Norm」，前一个 Block 的输出作为下一个 Block 的输入。
+
+解码器 decoder
+
+decode-block结构：三层 Masked Self-attention+Cross Attention+FFN
+
+Masked Self-attention：带掩码的多头注意力（QKV均来自x）、输出映射、dropout、残差连接、层归一化
+
+Cross Attention：交叉多头注意力（Q来自xKV来自encode-output）、输出映射、dropout、残差连接、层归一化
+
+FFN：线性层、relu激活、线性层、dropout、残差连接、层归一化
+
+Decoder 首先给目标序列 Embedding 加入一次位置编码，然后经过 6 个参数相互独立的 Decoder Block。每个 Block 执行：Masked Self-Attention→ Add & Norm→ Cross-Attention ← encoder_output→ Add & Norm→ FFN→ Add & Norm。前一个 Decoder Block 的输出作为下一个 Decoder Block 的输入，而同一个 Encoder 最终输出会提供给每一个 Decoder Block 的 Cross-Attention。
